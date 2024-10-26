@@ -1,6 +1,8 @@
 package com.mab.simpleWebApp.service;
 
 import com.mab.simpleWebApp.model.Product;
+import com.mab.simpleWebApp.repository.ProductRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,49 +12,33 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    List<Product> products = new ArrayList<>(Arrays.asList(
-            new Product(100,"iPhone",1400),
-            new Product(120,"TV",700),
-            new Product(130,"Mouse",26),
-            new Product(140,"Tablette",390)));
+    @Autowired
+    ProductRepo repo ;
+
+//    List<Product> products = new ArrayList<>(Arrays.asList(
+//            new Product(100,"iPhone",1400),
+//            new Product(120,"TV",700),
+//            new Product(130,"Mouse",26),
+//            new Product(140,"Tablette",390)));
 
     public List<Product> getProducts(){
-        return products;
+        return repo.findAll();
     }
 
     public Product getProductById(int prodId) {
-        return products.stream()
-                .filter(p -> p.getProdId() == prodId)
-                .findFirst().orElse(new Product(999,"Pas trouvé",0));
+        return repo.findById(prodId).orElse(new Product());
     }
 
     public void addProduct(Product prod){
-        products.add(prod);
+        System.out.println("Service addProduct : " + prod);
+        repo.save(prod);
     }
 
     public void updateProduct(Product prod) {
-
-        System.out.println("service prod : " + prod);
-
-        int index = 0;
-
-        for (int i = 0; i < products.size(); i++) {
-
-            if (products.get(i).getProdId()== prod.getProdId())
-                index = i;
-        }
-        products.set(index,prod);
+        repo.save(prod);
     }
 
     public void deleteProduct(int prodId) {
-
-        int index = 0;
-
-        for (int i = 0; i < products.size(); i++) {
-
-            if (products.get(i).getProdId()== prodId)
-                index = i;
-        }
-        products.remove(index);
+        repo.deleteById(prodId);
     }
 }
